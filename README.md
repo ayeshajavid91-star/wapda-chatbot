@@ -95,12 +95,14 @@ Create a `vercel.json` file in the root directory:
 
 ### Step 2: Prepare for Production
 
-Update `app.py` to handle Vercel environment:
+This repository already includes `vercel.json` and a Flask runtime block that reads the Vercel `PORT` environment variable.
 
-Replace the last line with:
+If you want to run locally in production mode, use:
 ```python
 if __name__ == '__main__':
-    app.run(debug=False)
+    debug_mode = os.getenv('FLASK_DEBUG', 'False') == 'True'
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
 ```
 
 ### Step 3: Push to GitHub
