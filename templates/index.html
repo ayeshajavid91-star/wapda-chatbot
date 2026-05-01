@@ -613,16 +613,14 @@
         <div class="chat-box" id="chatBox">
             <div class="message bot">
                 <div class="message-content">
-                    <i class="fas fa-star"></i> <strong>Welcome to WAPDA MDC Assistant!</strong><br><br>
-                    I'm your specialized AI assistant for meter reading operations and MDC responsibilities. I can help you with:
+                    <i class="fas fa-star"></i> <strong>Welcome to AI Assistant!</strong><br><br>
+                    I'm your intelligent AI assistant with advanced features:
                     <br><br>
-                    • 📊 <strong>Meter Reading Procedures</strong><br>
-                    • 👨‍💼 <strong>MDC Daily Operations</strong><br>
-                    • 🏛️ <strong>WAPDA Systems & Processes</strong><br>
-                    • 💰 <strong>Billing & Tariff Information</strong><br>
-                    • 🚨 <strong>Anomaly Detection & Resolution</strong><br>
-                    • 📞 <strong>Consumer Complaint Handling</strong><br><br>
-                    <em>Use the buttons above for quick access or ask me anything!</em>
+                    🔊 <strong>Voice Input/Output:</strong> Speak your questions and hear responses<br>
+                    📁 <strong>File Upload:</strong> Upload images and PDF documents<br>
+                    💬 <strong>Smart Chat:</strong> Ask me anything and get intelligent replies<br>
+                    🌐 <strong>Multi-language:</strong> Support for various languages<br><br>
+                    <em>Try the voice features or upload a file to get started!</em>
                 </div>
             </div>
         </div>
@@ -640,13 +638,16 @@
                     placeholder="Ask about meter reading, MDC duties, WAPDA procedures..." 
                     autocomplete="off"
                 >
-                <input type="file" id="imageInput" accept="image/*" hidden>
+                <input type="file" id="fileInput" accept="image/*,.pdf" hidden>
             </div>
-            <button class="image-button" onclick="document.getElementById('imageInput').click()" id="imageUploadButton" title="Upload equipment image">
-                <i class="fas fa-image"></i>
+            <button class="image-button" onclick="document.getElementById('fileInput').click()" id="fileUploadButton" title="Upload image or PDF">
+                <i class="fas fa-file-upload"></i>
             </button>
             <button class="mic-button" onclick="toggleMicrophone()" id="micButton" title="Speak your question">
                 <i class="fas fa-microphone"></i>
+            </button>
+            <button class="voice-button" onclick="toggleVoiceOutput()" id="voiceButton" title="Toggle voice responses">
+                <i class="fas fa-volume-up"></i>
             </button>
             <button onclick="sendMessage()" id="sendButton">
                 <i class="fas fa-paper-plane"></i> Send
@@ -771,6 +772,13 @@
                 top: chatBox.scrollHeight,
                 behavior: 'smooth'
             });
+            
+            // Speak bot messages if voice is enabled
+            if (sender === 'bot') {
+                // Remove emojis and formatting for speech
+                const cleanText = text.replace(/[^\w\s.,!?-]/g, '').trim();
+                speakText(cleanText);
+            }
         }
 
         function showTypingIndicator() {
@@ -863,31 +871,44 @@
             }
         }
 
-        const imageInput = document.getElementById('imageInput');
+        const fileInput = document.getElementById('fileInput');
         const imagePreviewArea = document.getElementById('imagePreviewArea');
         const imagePreview = document.getElementById('imagePreview');
         const previewText = document.getElementById('previewText');
 
-        imageInput.addEventListener('change', function(event) {
+        fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            showImagePreview(file);
-            uploadImage(file);
+            showFilePreview(file);
+            uploadFile(file);
         });
 
-        function showImagePreview(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded image preview">`;
-                previewText.textContent = `Selected image: ${file.name}`;
+        function showFilePreview(file) {
+            const fileType = file.type;
+            const fileName = file.name;
+            
+            if (fileType.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Uploaded image preview">`;
+                    previewText.textContent = `Selected image: ${fileName}`;
+                    imagePreviewArea.classList.add('visible');
+                };
+                reader.readAsDataURL(file);
+            } else if (fileType === 'application/pdf') {
+                imagePreview.innerHTML = `<i class="fas fa-file-pdf" style="font-size: 36px; color: #dc3545;"></i>`;
+                previewText.textContent = `Selected PDF: ${fileName}`;
                 imagePreviewArea.classList.add('visible');
-            };
-            reader.readAsDataURL(file);
+            } else {
+                imagePreview.innerHTML = `<i class="fas fa-file" style="font-size: 36px; color: #6c757d;"></i>`;
+                previewText.textContent = `Selected file: ${fileName}`;
+                imagePreviewArea.classList.add('visible');
+            }
         }
 
-        function uploadImage(file) {
+        function uploadFile(file) {
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('file', file);
 
             fetch('/api/upload', {
                 method: 'POST',
@@ -896,28 +917,77 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    displayMessage(`✅ Image uploaded successfully: ${data.filename}`, 'bot');
+                    displayMessage(`✅ File uploaded successfully: ${data.filename}`, 'bot');
                     if (data.url) {
                         displayMessage(`Preview URL: ${data.url}`, 'bot');
                     }
                 } else {
-                    displayMessage(`⚠️ Image upload failed: ${data.message}`, 'bot');
+                    displayMessage(`⚠️ File upload failed: ${data.message}`, 'bot');
                 }
             })
             .catch(error => {
-                displayMessage('⚠️ Image upload failed. Please try again.', 'bot');
+                displayMessage('⚠️ File upload failed. Please try again.', 'bot');
                 console.error('Upload error:', error);
             });
         }
 
-        // Add input focus effects
-        userInput.addEventListener('focus', function() {
-            this.parentElement.style.transform = 'scale(1.02)';
-        });
+        // Text-to-Speech variables
+        let voiceEnabled = false;
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
 
-        userInput.addEventListener('blur', function() {
-            this.parentElement.style.transform = 'scale(1)';
-        });
+        function toggleVoiceOutput() {
+            voiceEnabled = !voiceEnabled;
+            updateVoiceButton();
+            
+            if (voiceEnabled) {
+                displayMessage('🔊 Voice responses enabled', 'bot');
+            } else {
+                displayMessage('🔇 Voice responses disabled', 'bot');
+                if (currentUtterance) {
+                    speechSynthesis.cancel();
+                }
+            }
+        }
+
+        function updateVoiceButton() {
+            const voiceButton = document.getElementById('voiceButton');
+            if (!voiceButton) return;
+            if (voiceEnabled) {
+                voiceButton.style.background = '#28a745';
+                voiceButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+            } else {
+                voiceButton.style.background = 'var(--primary)';
+                voiceButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function speakText(text) {
+            if (!voiceEnabled || !speechSynthesis) return;
+            
+            // Cancel any ongoing speech
+            if (currentUtterance) {
+                speechSynthesis.cancel();
+            }
+            
+            // Create new utterance
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            
+            // Configure voice settings
+            currentUtterance.rate = 0.9;
+            currentUtterance.pitch = 1;
+            currentUtterance.volume = 0.8;
+            
+            // Set voice (prefer English voices)
+            const voices = speechSynthesis.getVoices();
+            const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+            if (englishVoice) {
+                currentUtterance.voice = englishVoice;
+            }
+            
+            // Speak
+            speechSynthesis.speak(currentUtterance);
+        }
 
         // Theme management
         let isDarkMode = true;

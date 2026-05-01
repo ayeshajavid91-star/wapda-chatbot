@@ -9,7 +9,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 
 UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(tempfile.gettempdir(), 'uploads')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'pdf'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 print('UPLOAD_FOLDER set to', app.config['UPLOAD_FOLDER'])
@@ -20,9 +20,56 @@ KNOWLEDGE_BASE = {
 }
 
 def find_relevant_answer(user_query):
-    """Find relevant answer from knowledge base"""
-    # Knowledge base has been cleared as requested
-    return "I'm a chatbot with no existing features loaded. Please suggest new features to implement!"
+    """Find relevant answer from knowledge base or provide intelligent responses"""
+    user_query_lower = user_query.lower().strip()
+    
+    # Handle greetings
+    if any(word in user_query_lower for word in ['hello', 'hi', 'hey', 'assalam', 'salaam']):
+        return "👋 Hello! I'm your AI assistant. I can help you with voice input, file uploads, and answering questions. What would you like to know?"
+    
+    # Handle voice-related queries
+    if any(word in user_query_lower for word in ['voice', 'speak', 'speech', 'audio', 'sound']):
+        return "🔊 I support voice input and output! Click the microphone button to speak your questions, and enable voice responses to hear my answers. Try asking me something!"
+    
+    # Handle file upload queries
+    if any(word in user_query_lower for word in ['upload', 'file', 'image', 'pdf', 'document']):
+        return "📁 I can help you upload images and PDF files. Click the upload button to select and send files. I can process both images and documents!"
+    
+    # Handle feature questions
+    if any(word in user_query_lower for word in ['feature', 'what can you do', 'capabilities', 'help']):
+        return """🤖 Here's what I can do:
+
+🔊 **Voice Features:**
+• Speak your questions using the microphone
+• Listen to my responses with voice output
+• Toggle voice on/off anytime
+
+📁 **File Upload:**
+• Upload images (PNG, JPG, JPEG, GIF, BMP)
+• Upload PDF documents
+• Automatic file processing
+
+💬 **Chat Features:**
+• Answer questions intelligently
+• Support for multiple languages
+• Real-time conversation
+
+❓ **Ask me anything!** I'm here to help with information, assistance, or just chat!"""
+
+    # Handle thank you
+    if any(word in user_query_lower for word in ['thank', 'thanks', 'shukriya']):
+        return "🙏 You're welcome! I'm glad I could help. Feel free to ask me anything else!"
+    
+    # Handle goodbye
+    if any(word in user_query_lower for word in ['bye', 'goodbye', 'see you', 'allah hafiz']):
+        return "👋 Goodbye! Have a great day. Come back anytime if you need assistance!"
+    
+    # Handle general questions
+    if '?' in user_query or any(word in user_query_lower for word in ['what', 'how', 'why', 'when', 'where', 'who', 'which']):
+        return f"🤔 That's an interesting question: '{user_query}'\n\nI'm an AI assistant with voice and file upload capabilities. While I don't have specific knowledge about that topic yet, I can help you find information or assist with uploading files. What else would you like to know?"
+    
+    # Default response for other inputs
+    return f"💬 I received your message: '{user_query}'\n\nI'm here to help! You can:\n• Ask me questions\n• Use voice input/output\n• Upload images or PDF files\n• Chat about various topics\n\nWhat would you like to do next?"
 
 @app.route('/')
 def index():
@@ -32,23 +79,39 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/api/upload', methods=['POST'])
-def upload_image():
-    if 'image' not in request.files:
-        return jsonify({'success': False, 'message': 'No image file found in request.'}), 400
+def upload_file():
+    if 'file' not in request.files and 'image' not in request.files:
+        return jsonify({'success': False, 'message': 'No file found in request.'}), 400
 
-    file = request.files['image']
-    if file.filename == '':
+    # Check for both 'file' and 'image' keys for backward compatibility
+    file = request.files.get('file') or request.files.get('image')
+    
+    if not file or file.filename == '':
         return jsonify({'success': False, 'message': 'No selected file.'}), 400
 
     if not allowed_file(file.filename):
-        return jsonify({'success': False, 'message': 'Unsupported image type.'}), 400
+        return jsonify({'success': False, 'message': 'Unsupported file type. Please upload images (PNG, JPG, JPEG, GIF, BMP) or PDF files.'}), 400
 
     filename = secure_filename(file.filename)
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(save_path)
 
-    image_url = f'/uploads/{filename}'
-    return jsonify({'success': True, 'message': 'Image uploaded successfully.', 'filename': filename, 'url': image_url})
+    file_url = f'/uploads/{filename}'
+    
+    # Determine file type for response
+    file_type = "file"
+    if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+        file_type = "image"
+    elif filename.lower().endswith('.pdf'):
+        file_type = "PDF"
+    
+    return jsonify({
+        'success': True, 
+        'message': f'{file_type.capitalize()} uploaded successfully.', 
+        'filename': filename, 
+        'url': file_url,
+        'type': file_type
+    })
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
