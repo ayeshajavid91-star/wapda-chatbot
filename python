@@ -1,0 +1,5 @@
+def ceaser_encrypt(plaintext,shift):
+    encrypted=""
+    for char in plaintext:
+        if char.isalpha():
+            shiftbase
