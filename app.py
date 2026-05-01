@@ -29,6 +29,14 @@ def find_relevant_answer(user_query):
     meter_check_terms = ['meter check', 'check meter', 'meter inspection', 'meter condition', 'faulty meter', 'meter verification', 'meter test']
     illegal_connection_terms = ['illegal connection', 'kunda', 'theft', 'unauthorized connection', 'bypass', 'wire theft', 'illegal hook']
     consumer_complaint_terms = ['complaint', 'consumer complaint', 'billing complaint', 'service complaint', 'report issue', 'problem with consumer', 'customer complaint']
+    real_life_terms = ['problem', 'issue', 'situation', 'scenario', 'challenge', 'real-life', 'real life']
+    
+    # Specific problem situations
+    locked_terms = ['locked', 'inaccessible', 'gate closed', 'no access', 'cannot enter', 'taala', 'band']
+    dog_terms = ['dog', 'animal', 'kutta', 'bite', 'dangerous animal', 'pet']
+    weather_terms = ['weather', 'rain', 'storm', 'baarish', 'flood', 'pani']
+    faulty_meter_terms = ['broken', 'faulty', 'tampered', 'kharab', 'jal gaya', 'burnt meter', 'screen off', 'blank screen', 'meter jala']
+    dispute_terms = ['angry', 'dispute', 'gussa', 'larai', 'fight', 'argue', 'badtameezi']
 
     # Handle greetings
     if any(word in user_query_lower for word in ['hello', 'hi', 'hey', 'assalam', 'salaam']):
@@ -81,6 +89,25 @@ def find_relevant_answer(user_query):
 
     if any(term in user_query_lower for term in consumer_complaint_terms):
         return "📞 **Consumer Complaint Handling:**\n\n- Listen carefully to the consumer's issue.\n- Record complaint details clearly.\n- Inspect the meter and service connection if needed.\n- Report the complaint through the system and follow up until resolution."
+
+    # Specific Problem Scenarios
+    if any(term in user_query_lower for term in locked_terms):
+        return "🔒 **Locked or Inaccessible Meter Scenario:**\n\n- Do not attempt to climb walls or enter without permission.\n- Try calling out or ringing the bell again.\n- If no response, clearly note the exact location and access issue (e.g., 'House Locked').\n- Take a photo of the locked gate for proof if required.\n- Schedule a revisit or report to the supervisor."
+
+    if any(term in user_query_lower for term in dog_terms):
+        return "🐕 **Aggressive Animals / Dogs Scenario:**\n\n- Safety first! Do not enter premises if a dangerous dog is loose.\n- Ask the owner to tie up the dog before you enter.\n- Maintain a safe distance and do not make sudden movements.\n- Note 'Inaccessible due to dog' in your log if the owner is unavailable.\n- Report the situation to your supervisor."
+
+    if any(term in user_query_lower for term in weather_terms):
+        return "⛈️ **Bad Weather / Rain Scenario:**\n\n- Do not risk electrocution. Avoid touching wet meters or exposed wires.\n- Wear proper rain gear and rubber-soled, non-slip shoes.\n- Protect your recording device (mobile/logbook) from water damage.\n- Document any delays caused by the weather and resume safely."
+
+    if any(term in user_query_lower for term in faulty_meter_terms):
+        return "⚠️ **Broken / Burnt / Faulty Meter Scenario:**\n\n- Do not touch a burnt or heavily damaged meter.\n- If the screen is blank/off, try pressing the display button if safe.\n- Take a clear picture of the damaged or blank meter.\n- Record it as 'Defective/Burnt' in your system.\n- Immediately report the exact location to the maintenance team."
+
+    if any(term in user_query_lower for term in dispute_terms):
+        return "😠 **Angry Consumer / Dispute Scenario:**\n\n- Stay calm and polite. Do not argue back.\n- Listen to their concern (often about high bills or readings).\n- Explain that you are only recording the current reading.\n- Advise them to visit the local subdivision office with their bill for complaints.\n- If you feel unsafe, leave the premises immediately and report to your supervisor."
+
+    if any(term in user_query_lower for term in real_life_terms):
+        return "⚠️ **General Real-Life Meter Reader Situations:**\n\nMeter readers face many field challenges: Locked gates, aggressive dogs, bad weather, faulty meters, and angry consumers. Ask me about a specific situation like 'locked gate', 'dog', 'burnt meter', or 'angry customer' for specific guidance!"
 
     # Handle thank you
     if any(word in user_query_lower for word in ['thank', 'thanks', 'shukriya']):
