@@ -22,22 +22,37 @@ KNOWLEDGE_BASE = {
 def find_relevant_answer(user_query):
     """Find relevant answer from knowledge base or provide intelligent responses"""
     user_query_lower = user_query.lower().strip()
-    
+
+    # Meter reader task keywords
+    meter_reading_terms = ['meter reading', 'read meter', 'meter reader', 'reading route', 'readings', 'meter reading process']
+    data_record_terms = ['record', 'data record', 'log', 'save data', 'entry', 'data entry', 'record reading', 'store reading']
+    meter_check_terms = ['meter check', 'check meter', 'meter inspection', 'meter condition', 'faulty meter', 'meter verification', 'meter test']
+    illegal_connection_terms = ['illegal connection', 'kunda', 'theft', 'unauthorized connection', 'bypass', 'wire theft', 'illegal hook']
+    consumer_complaint_terms = ['complaint', 'consumer complaint', 'billing complaint', 'service complaint', 'report issue', 'problem with consumer', 'customer complaint']
+
     # Handle greetings
     if any(word in user_query_lower for word in ['hello', 'hi', 'hey', 'assalam', 'salaam']):
-        return "👋 Hello! I'm your AI assistant. I can help you with voice input, file uploads, and answering questions. What would you like to know?"
-    
+        return "👋 Hello! I'm your WAPDA Meter Reader Assistant. I can help you with meter reading, data recording, meter checking, illegal connection reporting, and consumer complaint handling. What would you like to know?"
+
     # Handle voice-related queries
     if any(word in user_query_lower for word in ['voice', 'speak', 'speech', 'audio', 'sound']):
-        return "🔊 I support voice input and output! Click the microphone button to speak your questions, and enable voice responses to hear my answers. Try asking me something!"
-    
+        return "🔊 I support voice input and output! Click the microphone button to speak your questions, and enable voice responses to hear my answers. Try asking about meter reading tasks or complaint handling."
+
     # Handle file upload queries
     if any(word in user_query_lower for word in ['upload', 'file', 'image', 'pdf', 'document']):
         return "📁 I can help you upload images and PDF files. Click the upload button to select and send files. I can process both images and documents!"
-    
+
     # Handle feature questions
     if any(word in user_query_lower for word in ['feature', 'what can you do', 'capabilities', 'help']):
         return """🤖 Here's what I can do:
+
+📌 **Meter Reader Tasks:**
+• Explain how meter reading works
+• Help with meter reading route planning
+• Describe accurate data recording steps
+• Guide meter checking and fault inspection
+• Explain illegal connection reporting (kunda, bypass)
+• Describe consumer complaint handling process
 
 🔊 **Voice Features:**
 • Speak your questions using the microphone
@@ -49,27 +64,38 @@ def find_relevant_answer(user_query):
 • Upload PDF documents
 • Automatic file processing
 
-💬 **Chat Features:**
-• Answer questions intelligently
-• Support for multiple languages
-• Real-time conversation
+❓ **Ask me anything related to meter reading or consumer service!"""
 
-❓ **Ask me anything!** I'm here to help with information, assistance, or just chat!"""
+    # Specific meter reader responses
+    if any(term in user_query_lower for term in meter_reading_terms):
+        return "📊 **Meter Reading Guide:**\n\n1. Verify the assigned route and meter list.\n2. Visit each meter carefully with PPE.\n3. Read the meter accurately and note the digits.\n4. Record readings clearly in the app or ledger.\n5. Report missing or inaccessible meters immediately."
+
+    if any(term in user_query_lower for term in data_record_terms):
+        return "📝 **Data Recording Best Practices:**\n\n- Record meter numbers and readings immediately.\n- Use clear, legible notes or mobile entry.\n- Save data in the app or logbook at the same time.\n- Verify entries before submission to avoid mistakes."
+
+    if any(term in user_query_lower for term in meter_check_terms):
+        return "🔎 **Meter Checking Process:**\n\n- Inspect the meter for damage or tampering.\n- Check seals, meter number, and connection wires.\n- Compare the reading with the previous record.\n- Report any faults or abnormal behavior to your supervisor."
+
+    if any(term in user_query_lower for term in illegal_connection_terms):
+        return "🚨 **Illegal Connection Reporting:**\n\n- Look for unauthorized wires, bypasses, or meter tampering.\n- Note the exact location and meter details.\n- Take a photo if it is safe and allowed.\n- Report the issue to the field office and follow official procedures."
+
+    if any(term in user_query_lower for term in consumer_complaint_terms):
+        return "📞 **Consumer Complaint Handling:**\n\n- Listen carefully to the consumer's issue.\n- Record complaint details clearly.\n- Inspect the meter and service connection if needed.\n- Report the complaint through the system and follow up until resolution."
 
     # Handle thank you
     if any(word in user_query_lower for word in ['thank', 'thanks', 'shukriya']):
-        return "🙏 You're welcome! I'm glad I could help. Feel free to ask me anything else!"
-    
+        return "🙏 You're welcome! I'm glad I could help. Feel free to ask me anything else about meter reading or service support."
+
     # Handle goodbye
     if any(word in user_query_lower for word in ['bye', 'goodbye', 'see you', 'allah hafiz']):
-        return "👋 Goodbye! Have a great day. Come back anytime if you need assistance!"
-    
-    # Handle general questions
+        return "👋 Goodbye! Have a great day. Come back anytime if you need assistance with meter reading or report handling!"
+
+    # Handle direct questions about meter reader work
     if '?' in user_query or any(word in user_query_lower for word in ['what', 'how', 'why', 'when', 'where', 'who', 'which']):
-        return f"🤔 That's an interesting question: '{user_query}'\n\nI'm an AI assistant with voice and file upload capabilities. While I don't have specific knowledge about that topic yet, I can help you find information or assist with uploading files. What else would you like to know?"
-    
+        return f"🤔 You've asked: '{user_query}'\n\nI can answer meter reader questions about reading, recording, checking meters, illegal connection reporting, and consumer complaint handling. Ask me for step-by-step guidance!"
+
     # Default response for other inputs
-    return f"💬 I received your message: '{user_query}'\n\nI'm here to help! You can:\n• Ask me questions\n• Use voice input/output\n• Upload images or PDF files\n• Chat about various topics\n\nWhat would you like to do next?"
+    return f"💬 I received your message: '{user_query}'\n\nI'm here to help with meter reading, data recording, meter checking, illegal connection reports, and consumer complaint handling. What would you like to do next?"
 
 @app.route('/')
 def index():
