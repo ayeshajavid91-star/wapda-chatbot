@@ -1,193 +1,98 @@
-# WAPDA MDC Chatbot - Meter Reading Assistant
+# ⚡ WAPDA MDC AI Assistant 🤖
+> **"Smart. Secure. AI-Powered."**
 
-A web-based chatbot specialized in WAPDA meter reading and Meter Data Controller (MDC) operations. Built as a semester final project.
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/ayeshajavid11/wapda-meter-assistant)
+[![Python](https://img.shields.io/badge/Python-3.9+-yellow.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Framework-Flask-lightgrey)](https://flask.palletsprojects.com/)
+[![License](https://img.shields.io/badge/License-Educational-green)](https://github.com/ayeshajavid91-star/wapda-chatbot)
 
-## Features
-
-✨ **Specialized Knowledge**: Focuses on WAPDA meter reading, billing processes, MDC responsibilities, and related topics.
-
-💬 **Smart Responses**: Redirects off-topic questions back to relevant WAPDA/MDC topics.
-
-🎨 **Modern UI**: Beautiful, responsive web interface with smooth animations.
-
-🖼️ **Image Upload**: Upload WAPDA equipment or meter photos directly for contextual support.
-
-⚡ **Real-time Chat**: Fast message processing with typing indicators.
-
-## Project Structure
-
-```
-chatbot/
-├── app.py                 # Flask backend with chatbot logic
-├── requirements.txt       # Python dependencies
-├── templates/
-│   └── index.html        # Chat interface (HTML/CSS/JS)
-├── static/               # Static files (CSS, JS if needed)
-└── README.md
-```
-
-## Installation & Setup
-
-### Prerequisites
-- Python 3.7+
-- pip (Python package manager)
-
-### Step 1: Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Step 2: Run Locally
-
-```bash
-python app.py
-```
-
-The chatbot will be available at: **http://localhost:5000**
-
-## Usage
-
-1. Open the chatbot in your browser
-2. Type any question about:
-   - Meter reading processes
-   - WAPDA operations
-   - MDC (Meter Data Controller) responsibilities
-   - Billing procedures
-   - Meter types and consumer categories
-3. The chatbot will provide relevant answers
-4. Off-topic questions will be redirected to WAPDA/MDC topics
-
-## Knowledge Base Topics
-
-The chatbot currently covers:
-- **Meter Reading**: Recording consumption data
-- **MDC**: Meter Data Controller roles and responsibilities
-- **WAPDA**: Water and Power Development Authority
-- **Billing**: Bill generation and calculation processes
-- **Meter Types**: Single phase, three phase, smart meters
-- **Consumer Categories**: Residential, commercial, industrial, agricultural
-- **Anomalies**: Identifying unusual meter readings
-- **Disputes**: Handling billing complaints and meter disputes
-
-## Deployment on Vercel
-
-### Step 1: Prepare for Deployment
-
-Create a `vercel.json` file in the root directory:
-
-```json
-{
-  "builds": [
-    {
-      "src": "app.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "app.py"
-    }
-  ]
-}
-```
-
-### Step 2: Prepare for Production
-
-This repository already includes `vercel.json` and a Flask runtime block that reads the Vercel `PORT` environment variable.
-
-If you want to run locally in production mode, use:
-```python
-if __name__ == '__main__':
-    debug_mode = os.getenv('FLASK_DEBUG', 'False') == 'True'
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=debug_mode)
-```
-
-### Step 3: Push to GitHub
-
-1. Create a GitHub repository
-2. Push your code:
-```bash
-git init
-git add .
-git commit -m "Initial WAPDA MDC Chatbot"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
-
-### Step 4: Deploy on Vercel
-
-1. Go to https://vercel.com
-2. Sign up/Login
-3. Click "New Project"
-4. Select your GitHub repository
-5. Deploy (Vercel auto-detects Flask)
-
-Your chatbot will be live!
-
-## How to Extend
-
-### Add More Topics to Knowledge Base
-
-Edit `app.py` in the `KNOWLEDGE_BASE` dictionary:
-
-```python
-"new_topic": {
-    "questions": ["question keyword 1", "question keyword 2"],
-    "answer": "Your answer here"
-}
-```
-
-### Integrate with OpenAI/ChatGPT (Advanced)
-
-For more advanced responses, you can integrate OpenAI API:
-
-1. Install: `pip install openai`
-2. Add your API key to environment
-3. Modify the `find_relevant_answer()` function to use OpenAI
-
-## Technologies Used
-
-- **Backend**: Flask (Python)
-- **Frontend**: HTML, CSS, JavaScript
-- **Deployment**: Vercel
-- **Styling**: Custom CSS with gradients and animations
-
-## Troubleshooting
-
-**Problem**: Port 5000 already in use
-**Solution**: 
-```bash
-python app.py --port 5001
-```
-
-**Problem**: ModuleNotFoundError
-**Solution**: Make sure you've installed requirements
-```bash
-pip install -r requirements.txt
-```
-
-## Future Enhancements
-
-- [ ] Integration with OpenAI API for more intelligent responses
-- [ ] Multi-language support (Urdu)
-- [ ] User authentication and history
-- [ ] Analytics dashboard
-- [ ] Mobile app version
-- [ ] Voice input/output
-- [ ] Image upload for meter reading verification
-
-## Author
-
-Developed as a semester final project for understanding WAPDA meter reading operations and MDC responsibilities.
-
-## License
-
-This project is for educational purposes.
+Welcome to the **WAPDA MDC AI Assistant**, a professional-grade, bilingual AI console designed to assist field staff and consumers with Meter Data Control (MDC) and WAPDA operations. This project was developed by **Ayesha Javid** to modernize utility management through artificial intelligence.
 
 ---
 
-**Questions?** Feel free to modify the knowledge base and add more topics as needed!
+## 🚀 Live Demo
+Experience the full AI console live on Hugging Face:
+**[👉 WAPDA MDC Assistant Live Console](https://huggingface.co/spaces/ayeshajavid11/wapda-meter-assistant)**
+
+---
+
+## ✨ Key Features
+
+### 🧠 Intelligent Core
+- **Enterprise Knowledge Base**: Over 160+ specialized Q&A pairs covering WAPDA, MEPCO, LESCO, and more.
+* **Smart Filter**: Automatically identifies and alerts when "irrelevant questions" are asked.
+* **Auto-Suggest**: Real-time, character-by-character search filtering (A-Z) for expert queries.
+
+### 🌍 Multi-Lingual Support
+- **English**: Full technical and conversational support.
+- **Urdu (Script)**: Understands and responds in Urdu (میٹر، بجلی، بل).
+- **Roman Urdu**: Handles conversational phrases like *"MDC ka matlab kia hai?"* or *"Kia hal hai?"*.
+
+### 🎨 Cinematic "Wao" UI
+- **ChatGPT/Claude Style**: Large, readable enterprise layout with avatars.
+* **Neon Dark Mode**: High-contrast, glowing UI for low-light field use.
+* **Interactive Dashboard**: Persistent chat history sidebar and quick-action chips.
+* **Smooth Transitions**: Glitch-effect titles and laser-scanning initialization animations.
+
+### 💾 Persistence
+- **Session Memory**: Remembers the last 20 messages per session for seamless multi-tasking.
+* **Recents List**: Quick access to previous queries in the sidebar.
+
+---
+
+## 🛠️ Tech Stack
+- **Backend**: Python 3.9 & Flask
+- **Frontend**: Vanilla HTML5, CSS3 (Glassmorphism), and JavaScript (ES6+)
+- **Session Management**: Flask-Session
+- **Deployment**: Hugging Face Spaces (Dockerized)
+
+---
+
+## 📂 Project Structure
+```bash
+wapda-chatbot/
+├── app.py                 # Core AI Logic & API Endpoints
+├── templates/
+│   └── index.html        # Enterprise Chat Console UI
+├── qa_database.json       # 160+ Question Knowledge Base
+├── requirements.txt       # System Dependencies
+├── Dockerfile             # Hugging Face Deployment Config
+└── README.md              # Project Documentation
+```
+
+---
+
+## 🛠️ Local Installation
+
+1. **Clone the Repo**
+   ```bash
+   git clone https://github.com/ayeshajavid91-star/wapda-chatbot.git
+   cd wapda-chatbot
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the Console**
+   ```bash
+   python app.py
+   ```
+   Access at: `http://localhost:5000`
+
+---
+
+## 👩‍💻 Developed By
+**Ayesha Javid**  
+*System Engineer & AI Developer*  
+*Specializing in Utility Management AI Solutions*
+
+---
+
+## 📜 License
+This project is developed for educational and professional demonstration purposes. All rights reserved.
+
+---
+
+*“Empowering WAPDA with Intelligence.”* ⚡
